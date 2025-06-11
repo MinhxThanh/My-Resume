@@ -5,7 +5,8 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/My-Resume/',
+    base: '/', // Use root path for custom domain
+  // base: '/My-Resume/',
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
