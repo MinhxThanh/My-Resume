@@ -175,5 +175,5 @@ export const INTERESTS = [
   'Advancing local AI models for text and image generation',
   'Exploring practical applications of LLMs in backend systems',
   'Studying advanced software architecture patterns for scalable applications',
-  'Listening to music and reading novels'
+  'Listen music and read novel'
 ];

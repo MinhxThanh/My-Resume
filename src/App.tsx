@@ -12,16 +12,9 @@ import Interests from './components/Interests';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import LoadingScreen from './components/LoadingScreen';
-import { useScrollPerformance } from './hooks/useScrollPerformance';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Apply scroll performance optimizations
-  // useScrollPerformance({
-  //   reducedMotion: false,
-  //   targetFPS: 60
-  // });
 
   useEffect(() => {
     // Simulate loading time
@@ -38,7 +31,7 @@ function App() {
         {isLoading ? (
           <LoadingScreen key="loading" />
         ) : (
-          <div key="main" className="gpu-accelerated">
+          <div key="main">
             <Navigation />
             <main>
               <Hero />

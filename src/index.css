@@ -2,154 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Variables for Dynamic Performance Control */
-:root {
-  --animation-duration: 0.3s;
-  --blur-intensity: 16px;
-  --transform-origin: center;
-  --will-change: auto;
-}
-
-/* Performance Optimizations */
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  /* Enable hardware acceleration for the entire page */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
-  /* Optimize font rendering */
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Optimize animations and transforms */
-*,
-*::before,
-*::after {
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  /* Use CSS variables for consistent timing */
-  transition-duration: var(--animation-duration);
-}
-
-/* Hardware acceleration for smooth animations */
-.animate-glow,
-.animate-pulse,
-.animate-float {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  /* Use native browser optimization */
-  content-visibility: auto;
-}
-
-/* CSS Containment for better performance */
-section {
-  contain: layout style paint;
-  /* Optimize scrolling performance */
-  scroll-snap-align: start;
-}
-
-/* Optimize background gradients and blur effects */
-.bg-gradient-to-r,
-.bg-gradient-to-l,
-.bg-gradient-to-br,
-.bg-gradient-to-tr {
-  will-change: var(--will-change);
-  transform: translateZ(0);
-  /* Reduce paint complexity */
-  background-attachment: fixed;
-}
-
-/* Optimize blur effects */
-.blur-2xl,
-.blur-3xl {
-  will-change: transform;
-  transform: translateZ(0);
-  contain: strict;
-  /* Use CSS variable for dynamic blur control */
-  filter: blur(var(--blur-intensity));
-}
-
-/* Smooth scrolling optimizations */
-.overflow-hidden {
-  contain: layout;
-  /* Optimize for scrolling */
-  overscroll-behavior: contain;
-}
-
-/* Optimize Framer Motion animations */
-[data-framer-component] {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  /* Use native browser optimization */
-  content-visibility: auto;
-}
-
-/* Optimize images and media */
-img, video {
-  /* Hardware acceleration for media */
-  transform: translateZ(0);
-  /* Optimize rendering */
-  image-rendering: optimizeQuality;
-  /* Prevent layout shifts */
-  content-visibility: auto;
-}
-
-/* Intersection Observer optimizations */
-[data-in-view] {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
-}
-
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) translateZ(0);
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px) translateZ(0);
+    transform: translateY(-10px);
   }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
-  will-change: transform;
-  transform: translateZ(0);
-  /* Use CSS variable for timing */
-  animation-duration: calc(var(--animation-duration) * 10);
-}
-
-/* Optimize glow animation */
-@keyframes glow {
-  0% { 
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
-    transform: translateZ(0);
-  }
-  100% { 
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
-    transform: translateZ(0);
-  }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-  animation-duration: calc(var(--animation-duration) * 6.67);
 }
 
 /* Custom Scrollbar Styles */
@@ -167,13 +30,13 @@ img, video {
   background: linear-gradient(135deg, #00d9ff, #7c3aed);
   border-radius: 10px;
   border: 2px solid #0a0a0a;
-  transition: all var(--animation-duration) ease;
+  transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #7c3aed, #00d9ff);
   border: 2px solid #171717;
-  transform: scale(1.1) translateZ(0);
+  transform: scale(1.1);
 }
 
 ::-webkit-scrollbar-corner {
@@ -211,88 +74,81 @@ html {
   background: linear-gradient(135deg, #7c3aed, #00d9ff);
 }
 
-/* Performance utilities */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform;
-  /* Enable hardware acceleration */
-  -webkit-transform: translateZ(0);
-  /* Optimize for scrolling */
-  backface-visibility: hidden;
+
+.loader {
+  width: 500px;
+  height: 250px;
 }
 
-.contain-layout {
-  contain: layout;
+.circle {
+  fill: #F25A33;
 }
 
-.contain-paint {
-  contain: paint;
+.circle-one {
+  opacity: 0;
 }
 
-.contain-strict {
-  contain: strict;
+.svg-stroke {
+  fill: transparent;
+  stroke-dasharray: 46.82, 93.64;
+  stroke-dashoffset: 46.82;
+  stroke: #F25A33;
+  opacity: 1;
 }
 
-/* Z-index utilities for proper layering */
-.z-navigation {
-  z-index: 100;
-  position: relative;
+.svg-wrap .svg-stroke {
+  animation: stroke-start 1.6s linear, stroke-end 1.6s 0.8s linear infinite;
 }
 
-.z-scroll-top {
-  z-index: 60;
-  position: fixed;
+.svg-wrap .circle-one {
+  animation: dot-one 0s 0.8s, move-dot 1.6s 0.8s linear infinite;
 }
 
-.z-background {
-  z-index: 0;
-  position: absolute;
+.svg-wrap .circle-two,
+.svg-wrap .circle-three {
+  animation: move-dot 1.6s 0.8s linear infinite;
 }
 
-/* Ensure navigation and buttons are always visible */
-nav[class*="fixed"] {
-  z-index: 100 !important;
-  isolation: isolate;
-}
-
-button[class*="fixed"] {
-  z-index: 60 !important;
-  isolation: isolate;
-}
-
-/* Canvas background should stay behind everything */
-canvas {
-  z-index: 0 !important;
-  pointer-events: none !important;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+@keyframes dot-one {
+  from {
+    opacity: 0;
   }
-  
-  /* Override CSS variables for reduced motion */
-  :root {
-    --animation-duration: 0.01ms;
+
+  to {
+    opacity: 1;
   }
 }
 
-/* Low-end device optimizations */
-@media (max-width: 768px) and (max-resolution: 1.5dppx) {
-  .blur-2xl,
-  .blur-3xl {
-    filter: blur(8px); /* Reduce blur intensity on low-end devices */
+@keyframes stroke-start {
+  50% {
+    stroke-dashoffset: 46.82;
   }
-  
-  /* Simplify animations on mobile */
-  .animate-glow {
-    animation: none;
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes stroke-end {
+  50% {
+    stroke-dasharray: 46.82, 93.64;
+    stroke-dashoffset: 0;
+    transform: translateX(0);
+  }
+
+  100% {
+    stroke-dasharray: 0, 93.64;
+    stroke-dashoffset: -46.82;
+    transform: translateX(10px);
+  }
+}
+
+@keyframes move-dot {
+  50% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(10px);
   }
 }

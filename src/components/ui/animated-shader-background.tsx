@@ -1,12 +1,13 @@
+"use client";
+
 import React, { useEffect, useRef } from 'react';
 
-const HeroWave: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const HeroWave = () => {
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -14,7 +15,7 @@ const HeroWave: React.FC = () => {
     const SCALE = 2;
 
     const resizeCanvas = () => {
-      if (!canvas) return;
+      if (!canvas || !ctx) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       width = Math.floor(canvas.width / SCALE);
@@ -36,19 +37,17 @@ const HeroWave: React.FC = () => {
       COS_TABLE[i] = Math.cos(angle);
     }
 
-    const fastSin = (x: number): number => {
+    const fastSin = (x) => {
       const index = Math.floor(((x % (Math.PI * 2)) / (Math.PI * 2)) * 1024) & 1023;
       return SIN_TABLE[index];
     };
 
-    const fastCos = (x: number): number => {
+    const fastCos = (x) => {
       const index = Math.floor(((x % (Math.PI * 2)) / (Math.PI * 2)) * 1024) & 1023;
       return COS_TABLE[index];
     };
 
     const render = () => {
-      if (!canvas || !ctx || !data) return;
-      
       const time = (Date.now() - startTime) * 0.001;
 
       for (let y = 0; y < height; y++) {
@@ -96,15 +95,7 @@ const HeroWave: React.FC = () => {
     return () => window.removeEventListener('resize', resizeCanvas);
   }, []);
 
-  return <canvas 
-    ref={canvasRef} 
-    className="absolute inset-0 w-full h-full z-0" 
-    style={{
-      pointerEvents: 'none',
-      transform: 'translateZ(0)',
-      willChange: 'auto'
-    }}
-  />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
 };
 
 export default HeroWave;
