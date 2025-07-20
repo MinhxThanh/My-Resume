@@ -2,15 +2,297 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for Dynamic Performance Control */
+:root {
+  --animation-duration: 0.3s;
+  --blur-intensity: 16px;
+  --transform-origin: center;
+  --will-change: auto;
+}
+
+/* Performance Optimizations */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Enable hardware acceleration for the entire page */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+  /* Optimize font rendering */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize animations and transforms */
+*,
+*::before,
+*::after {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Use CSS variables for consistent timing */
+  transition-duration: var(--animation-duration);
+}
+
+/* Hardware acceleration for smooth animations */
+.animate-glow,
+.animate-pulse,
+.animate-float {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Use native browser optimization */
+  content-visibility: auto;
+}
+
+/* CSS Containment for better performance */
+section {
+  contain: layout style paint;
+  /* Optimize scrolling performance */
+  scroll-snap-align: start;
+}
+
+/* Optimize background gradients and blur effects */
+.bg-gradient-to-r,
+.bg-gradient-to-l,
+.bg-gradient-to-br,
+.bg-gradient-to-tr {
+  will-change: var(--will-change);
+  transform: translateZ(0);
+  /* Reduce paint complexity */
+  background-attachment: fixed;
+}
+
+/* Optimize blur effects */
+.blur-2xl,
+.blur-3xl {
+  will-change: transform;
+  transform: translateZ(0);
+  contain: strict;
+  /* Use CSS variable for dynamic blur control */
+  filter: blur(var(--blur-intensity));
+}
+
+/* Smooth scrolling optimizations */
+.overflow-hidden {
+  contain: layout;
+  /* Optimize for scrolling */
+  overscroll-behavior: contain;
+}
+
+/* Optimize Framer Motion animations */
+[data-framer-component] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  /* Use native browser optimization */
+  content-visibility: auto;
+}
+
+/* Optimize images and media */
+img, video {
+  /* Hardware acceleration for media */
+  transform: translateZ(0);
+  /* Optimize rendering */
+  image-rendering: optimizeQuality;
+  /* Prevent layout shifts */
+  content-visibility: auto;
+}
+
+/* Intersection Observer optimizations */
+[data-in-view] {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0px) translateZ(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-10px) translateZ(0);
   }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  /* Use CSS variable for timing */
+  animation-duration: calc(var(--animation-duration) * 10);
+}
+
+/* Optimize glow animation */
+@keyframes glow {
+  0% { 
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+    transform: translateZ(0);
+  }
+  100% { 
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+    transform: translateZ(0);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+  animation-duration: calc(var(--animation-duration) * 6.67);
+}
+
+/* Custom Scrollbar Styles */
+/* For Webkit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00d9ff, #7c3aed);
+  border-radius: 10px;
+  border: 2px solid #0a0a0a;
+  transition: all var(--animation-duration) ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed, #00d9ff);
+  border: 2px solid #171717;
+  transform: scale(1.1) translateZ(0);
+}
+
+::-webkit-scrollbar-corner {
+  background: #0a0a0a;
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #00d9ff #0a0a0a;
+}
+
+/* Custom scrollbar for specific containers if needed */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #00d9ff #0a0a0a;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #171717;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00d9ff, #7c3aed);
+  border-radius: 8px;
+  border: 1px solid #171717;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed, #00d9ff);
+}
+
+/* Performance utilities */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  /* Enable hardware acceleration */
+  -webkit-transform: translateZ(0);
+  /* Optimize for scrolling */
+  backface-visibility: hidden;
+}
+
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Z-index utilities for proper layering */
+.z-navigation {
+  z-index: 100;
+  position: relative;
+}
+
+.z-scroll-top {
+  z-index: 60;
+  position: fixed;
+}
+
+.z-background {
+  z-index: 0;
+  position: absolute;
+}
+
+/* Ensure navigation and buttons are always visible */
+nav[class*="fixed"] {
+  z-index: 100 !important;
+  isolation: isolate;
+}
+
+button[class*="fixed"] {
+  z-index: 60 !important;
+  isolation: isolate;
+}
+
+/* Canvas background should stay behind everything */
+canvas {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Override CSS variables for reduced motion */
+  :root {
+    --animation-duration: 0.01ms;
+  }
+}
+
+/* Low-end device optimizations */
+@media (max-width: 768px) and (max-resolution: 1.5dppx) {
+  .blur-2xl,
+  .blur-3xl {
+    filter: blur(8px); /* Reduce blur intensity on low-end devices */
+  }
+  
+  /* Simplify animations on mobile */
+  .animate-glow {
+    animation: none;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Code, Brain, Rocket, Users } from 'lucide-react';
+import { SUMMARY } from '../utils/constants';
 
 const About: React.FC = () => {
   const [ref, inView] = useInView({
@@ -18,7 +19,7 @@ const About: React.FC = () => {
     {
       icon: Brain,
       title: 'AI & Machine Learning',
-      description: 'Experience with OpenAI, Claude, Stable Diffusion, and various AI tools for practical applications'
+      description: 'Experience with ChatGPT, Claude, Stable Diffusion, and various AI tools for practical applications'
     },
     {
       icon: Rocket,
@@ -28,7 +29,7 @@ const About: React.FC = () => {
     {
       icon: Users,
       title: 'Community Leadership',
-      description: 'Co-founded and manage AI community of 160,000+ members, leading educational initiatives'
+      description: 'Co-founded and manage AI community of 200,000+ members, leading educational initiatives'
     }
   ];
 
@@ -65,16 +66,14 @@ const About: React.FC = () => {
           >
             <div className="prose prose-lg max-w-none">
               <p className="font-inter text-lg text-neutral-200 leading-relaxed">
-                With over <span className="text-accent font-semibold">3+ years</span> of experience in software development, 
-                I specialize in creating innovative AI-integrated solutions that bridge cutting-edge technology with 
-                exceptional user experiences.
+                {SUMMARY}
               </p>
               
               <p className="font-inter text-lg text-neutral-200 leading-relaxed">
                 My journey spans from building scalable web applications to leading one of Vietnam's largest AI communities. 
-                I've successfully grown w404.net from 1,000 to <span className="text-accent font-semibold">10,000+ monthly visitors</span> 
+                I've successfully grown w404.net from 5,000 to <span className="text-accent font-semibold">15,000+ monthly visitors</span> 
                 while co-founding the "Nghiện AI" community that now serves over 
-                <span className="text-secondary font-semibold"> 160,000 members</span>.
+                <span className="text-secondary font-semibold"> 200,000 members</span>.
               </p>
               
               <p className="font-inter text-lg text-neutral-200 leading-relaxed">
@@ -89,10 +88,10 @@ const About: React.FC = () => {
                 3+ Years Experience
               </div>
               <div className="bg-gradient-to-r from-secondary/20 to-accent/20 border border-secondary/30 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm">
-                160k+ Community Members
+                200k+ Community Members
               </div>
               <div className="bg-gradient-to-r from-accent/20 to-secondary/20 border border-accent/30 text-white px-4 py-2 rounded-full font-semibold backdrop-blur-sm">
-                10k+ Monthly Visitors
+                15k+ Monthly Visitors
               </div>
             </div>
           </motion.div>

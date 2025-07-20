@@ -25,6 +25,20 @@ export interface Skill {
   category: 'frontend' | 'backend' | 'ai' | 'tools';
 }
 
+export interface Certification {
+  id: number;
+  name: string;
+  issuer: string;
+  year: string;
+}
+
+export interface Language {
+  id: number;
+  name: string;
+  level: string;
+  details?: string;
+}
+
 export interface ContactForm {
   name: string;
   email: string;

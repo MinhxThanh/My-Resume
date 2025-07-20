@@ -1,133 +1,110 @@
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 
-const AnimatedShaderBackground: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+const HeroWave: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    const container = containerRef.current;
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 1);
-    container.appendChild(renderer.domElement);
+    let width: number, height: number, imageData: ImageData, data: Uint8ClampedArray;
+    const SCALE = 2;
 
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-      },
-      vertexShader: `
-        void main() {
-          gl_Position = vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float iTime;
-        uniform vec2 iResolution;
+    const resizeCanvas = () => {
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      width = Math.floor(canvas.width / SCALE);
+      height = Math.floor(canvas.height / SCALE);
+      imageData = ctx.createImageData(width, height);
+      data = imageData.data;
+    };
 
-        #define NUM_OCTAVES 3
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-        float rand(vec2 n) {
-          return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
-        }
+    const startTime = Date.now();
 
-        float noise(vec2 p) {
-          vec2 ip = floor(p);
-          vec2 u = fract(p);
-          u = u*u*(3.0-2.0*u);
+    const SIN_TABLE = new Float32Array(1024);
+    const COS_TABLE = new Float32Array(1024);
+    for (let i = 0; i < 1024; i++) {
+      const angle = (i / 1024) * Math.PI * 2;
+      SIN_TABLE[i] = Math.sin(angle);
+      COS_TABLE[i] = Math.cos(angle);
+    }
 
-          float res = mix(
-            mix(rand(ip), rand(ip + vec2(1.0, 0.0)), u.x),
-            mix(rand(ip + vec2(0.0, 1.0)), rand(ip + vec2(1.0, 1.0)), u.x), u.y);
-          return res * res;
-        }
+    const fastSin = (x: number): number => {
+      const index = Math.floor(((x % (Math.PI * 2)) / (Math.PI * 2)) * 1024) & 1023;
+      return SIN_TABLE[index];
+    };
 
-        float fbm(vec2 x) {
-          float v = 0.0;
-          float a = 0.3;
-          vec2 shift = vec2(100);
-          mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-          for (int i = 0; i < NUM_OCTAVES; ++i) {
-            v += a * noise(x);
-            x = rot * x * 2.0 + shift;
-            a *= 0.4;
-          }
-          return v;
-        }
+    const fastCos = (x: number): number => {
+      const index = Math.floor(((x % (Math.PI * 2)) / (Math.PI * 2)) * 1024) & 1023;
+      return COS_TABLE[index];
+    };
 
-        void main() {
-          vec2 shake = vec2(sin(iTime * 1.2) * 0.005, cos(iTime * 2.1) * 0.005);
-          vec2 p = ((gl_FragCoord.xy + shake * iResolution.xy) - iResolution.xy * 0.5) / iResolution.y * mat2(6.0, -4.0, 4.0, 6.0);
-          vec2 v;
-          vec4 o = vec4(0.0);
+    const render = () => {
+      if (!canvas || !ctx || !data) return;
+      
+      const time = (Date.now() - startTime) * 0.001;
 
-          float f = 2.0 + fbm(p + vec2(iTime * 5.0, 0.0)) * 0.5;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const u_x = (2 * x - width) / height;
+          const u_y = (2 * y - height) / height;
 
-          for (float i = 0.0; i < 35.0; i++) {
-            v = p + cos(i * i + (iTime + p.x * 0.08) * 0.025 + i * vec2(13.0, 11.0)) * 3.5 + vec2(sin(iTime * 3.0 + i) * 0.003, cos(iTime * 3.5 - i) * 0.003);
-            float tailNoise = fbm(v + vec2(iTime * 0.5, i)) * 0.3 * (1.0 - (i / 35.0));
-            vec4 auroraColors = vec4(
-              0.1 + 0.3 * sin(i * 0.2 + iTime * 0.4),
-              0.3 + 0.5 * cos(i * 0.3 + iTime * 0.5),
-              0.7 + 0.3 * sin(i * 0.4 + iTime * 0.3),
-              1.0
-            );
-            vec4 currentContribution = auroraColors * exp(sin(i * i + iTime * 0.8)) / length(max(v, vec2(v.x * f * 0.015, v.y * 1.5)));
-            float thinnessFactor = smoothstep(0.0, 1.0, i / 35.0) * 0.6;
-            o += currentContribution * (1.0 + tailNoise * 0.8) * thinnessFactor;
+          let a = 0;
+          let d = 0;
+
+          for (let i = 0; i < 4; i++) {
+            a += fastCos(i - d + time * 0.5 - a * u_x);
+            d += fastSin(i * u_y + a);
           }
 
-          o = tanh(pow(o / 100.0, vec4(1.6)));
-          gl_FragColor = o * 1.5;
+          const wave = (fastSin(a) + fastCos(d)) * 0.5;
+          const intensity = 0.3 + 0.4 * wave;
+          const baseVal = 0.1 + 0.15 * fastCos(u_x + u_y + time * 0.3);
+          const blueAccent = 0.2 * fastSin(a * 1.5 + time * 0.2);
+          const purpleAccent = 0.15 * fastCos(d * 2 + time * 0.1);
+
+          const r = Math.max(0, Math.min(1, baseVal + purpleAccent * 0.8)) * intensity;
+          const g = Math.max(0, Math.min(1, baseVal + blueAccent * 0.6)) * intensity;
+          const b = Math.max(0, Math.min(1, baseVal + blueAccent * 1.2 + purpleAccent * 0.4)) * intensity;
+
+          const index = (y * width + x) * 4;
+          data[index] = r * 255;
+          data[index + 1] = g * 255;
+          data[index + 2] = b * 255;
+          data[index + 3] = 255;
         }
-      `
-    });
-
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    let frameId: number;
-    const animate = () => {
-      material.uniforms.iTime.value += 0.016;
-      renderer.render(scene, camera);
-      frameId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      renderer.setSize(width, height);
-      material.uniforms.iResolution.value.set(width, height);
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      if (frameId) {
-        cancelAnimationFrame(frameId);
       }
-      window.removeEventListener('resize', handleResize);
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
+
+      ctx.putImageData(imageData, 0, 0);
+      if (SCALE > 1) {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
       }
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
+
+      requestAnimationFrame(render);
     };
+
+    render();
+
+    return () => window.removeEventListener('resize', resizeCanvas);
   }, []);
 
-  return (
-    <div 
-      ref={containerRef} 
-      className="fixed inset-0 w-full h-full z-0"
-      style={{ pointerEvents: 'none' }}
-    />
-  );
+  return <canvas 
+    ref={canvasRef} 
+    className="absolute inset-0 w-full h-full z-0" 
+    style={{
+      pointerEvents: 'none',
+      transform: 'translateZ(0)',
+      willChange: 'auto'
+    }}
+  />;
 };
 
-export default AnimatedShaderBackground;
+export default HeroWave;

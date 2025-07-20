@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Loader from './ui/loading';
 
 const LoadingScreen: React.FC = () => {
   return (
@@ -40,18 +41,9 @@ const LoadingScreen: React.FC = () => {
       </div>
 
       <div className="text-center relative z-10">
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="w-16 h-16 border-4 border-accent/30 border-t-accent rounded-full mx-auto mb-8"
-        />
+        <div className="flex justify-center mb-8">
+          <Loader />
+        </div>
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}

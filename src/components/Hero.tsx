@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Download, Github, Linkedin, Mail, ExternalLink, Facebook } from 'lucide-react';
-import { SOCIAL_LINKS } from '../utils/constants';
+import { SOCIAL_LINKS, SUMMARY } from '../utils/constants';
 import { AnimatedText } from './ui/animated-underline-text-one';
-import AnimatedShaderBackground from './ui/animated-shader-background';
+import HeroWave from './ui/animated-shader-background';
 
 const Hero: React.FC = () => {
   const scrollToAbout = () => {
@@ -11,14 +11,14 @@ const Hero: React.FC = () => {
   };
 
   const downloadResume = () => {
-    // In a real implementation, this would trigger a PDF download
-    window.open('/resume-le-minh-thanh.pdf', '_blank');
+    // Download the resume PDF from assets folder
+    window.open('/assets/Leo Resume.pdf', '_blank');
   };
 
   return (
     <section id="home" className="min-h-screen mt-5 flex items-center justify-center relative overflow-hidden">
       {/* Animated Shader Background */}
-      <AnimatedShaderBackground />
+      <HeroWave />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-r from-accent via-secondary to-accent p-1 animate-glow">
                 <img
-                  src="https://scontent-itm1-1.xx.fbcdn.net/v/t39.30808-1/476236527_2080991302361970_842907912591835949_n.jpg?stp=c130.0.1666.1667a_dst-jpg_s480x480_tt6&_nc_cat=111&ccb=1-7&_nc_sid=1d2534&_nc_ohc=WYKjE2KQ99MQ7kNvwG_X6aj&_nc_oc=AdnMjlfGyfZ0zOeFWxvzu_bxNIi9M2pDpTv8RgWznwrfz19FVg7AiFD96G3SImmN1vU&_nc_zt=24&_nc_ht=scontent-itm1-1.xx&_nc_gid=VKF7yfMy-VCSXca7Vrbc4g&oh=00_AfP9z0AvUGiWOphWt-lQ_42gba3N3S6PdC2OqEgraREKTQ&oe=684C8FAE"
+                  src="/assets/avatar.png"
                   alt="Minh Thành"
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -93,9 +93,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 1.1 }}
             className="font-inter text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed"
           >
-            Full Stack Developer and AI Specialist with over 3 years of experience building scalable 
-            web applications and AI-driven solutions. Skilled in optimizing performance, enhancing UX, 
-            and deploying LLM-driven applications on cloud platforms.
+            {SUMMARY}
           </motion.p>
 
           {/* CTA Buttons */}
